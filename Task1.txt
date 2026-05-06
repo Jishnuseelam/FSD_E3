@@ -1,0 +1,242 @@
+INDEX.HTML: 
+<!DOCTYPE html> 
+<html> 
+<head> 
+<title>Student Portal</title> 
+<link rel="stylesheet" href="style.css"> 
+</head> 
+<body> 
+<div class="home-container"> 
+<h1>Welcome to Student Portal</h1> 
+<p>Register and manage student information easily.</p> 
+<a href="registration.html" class="start-btn">Go to Registration</a> 
+</div> 
+</body> 
+</html> 
+REGISTRATION.HTML: 
+<!DOCTYPE html> 
+<html> 
+<head> 
+<title>Student Registration</title> 
+<link rel="stylesheet" href="style.css"> 
+</head> 
+<body> 
+<div class="container"> 
+<h1>Student Registration</h1> 
+<button onclick="goHome()" class="home-btn">Home</button> 
+<form id="studentForm"> 
+<label>Name</label> 
+<input type="text" id="name" placeholder="Enter your name" required> 
+<label>Email</label> 
+<input type="email" id="email" placeholder="Enter your email" required> 
+<label>Date of Birth</label> 
+<input type="date" id="dob" required> 
+<label>Department</label> 
+<select id="department" required> 
+<option value="">Select Department</option> 
+<option>CSE</option> 
+<option>IT</option> 
+<option>ECE</option> 
+<option>MECH</option> 
+</select> 
+<label>Phone</label> 
+<input type="text" id="phone" placeholder="Enter phone number" required> 
+<button type="submit">Register</button> 
+</form> 
+</div> 
+<script src="script.js"></script> 
+</body> 
+</html> 
+STYLE.CSS: 
+body{ 
+font-family: 'Segoe UI', sans-serif; 
+background: linear-gradient(135deg,#0f2027,#203a43,#2c5364); 
+height:100vh; 
+display:flex; 
+justify-content:center; 
+align-items:center; 
+margin:0; 
+} 
+.container{ 
+width:420px; 
+padding:35px; 
+background:rgba(255,255,255,0.08); 
+border-radius:18px; 
+backdrop-filter: blur(10px); 
+box-shadow:0 10px 35px rgba(0,0,0,0.6); 
+} 
+h1{ 
+text-align:center; 
+color:white; 
+margin-bottom:25px; 
+} 
+h2{ 
+text-align:center; 
+color:white; 
+margin-top:30px; 
+} 
+form{ 
+display:flex; 
+f
+lex-direction:column; 
+} 
+label{ 
+color:#ddd; 
+font-size:14px; 
+margin-bottom:5px; 
+margin-top:10px; 
+} 
+input,select{ 
+width:100%; 
+padding:12px; 
+border:none; 
+border-radius:8px; 
+background:#27496d; 
+color:white; 
+font-size:14px; 
+outline:none; 
+margin-bottom:5px; 
+} 
+input:focus,select:focus{ 
+box-shadow:0 0 8px #00eaff; 
+background:#2c5d8a; 
+} 
+button{ 
+margin-top:15px; 
+padding:12px; 
+border:none; 
+border-radius:10px; 
+background:linear-gradient(45deg,#ff4b2b,#ff416c); 
+color:white; 
+font-size:16px; 
+font-weight:bold; 
+cursor:pointer; 
+transition:0.3s; 
+} 
+button:hover{ 
+transform:scale(1.05); 
+box-shadow:0 0 15px #ff416c; 
+} 
+#studentList{ 
+margin-top:15px; 
+text-align:center; 
+color:white; 
+font-size:15px; 
+} 
+.home-container{ 
+text-align:center; 
+color:white; 
+background:rgba(255,255,255,0.08); 
+padding:50px; 
+border-radius:20px; 
+backdrop-filter: blur(10px); 
+box-shadow:0 10px 35px rgba(0,0,0,0.6); 
+width:420px; 
+} 
+.home-container h1{ 
+font-size:32px; 
+margin-bottom:15px; 
+} 
+.home-container p{ 
+margin-bottom:30px; 
+color:#ddd; 
+} 
+.start-btn{ 
+text-decoration:none; 
+padding:12px 25px; 
+border-radius:10px; 
+background:linear-gradient(45deg,#ff4b2b,#ff416c); 
+color:white; 
+font-weight:bold; 
+transition:0.3s; 
+} 
+.start-btn:hover{ 
+transform:scale(1.05); 
+box-shadow:0 0 15px #ff416c; 
+} 
+SCRIPT.JS: 
+const form = document.getElementById("studentForm") 
+form.addEventListener("submit", async (e) => { 
+e.preventDefault() 
+const student = { 
+name: document.getElementById("name").value, 
+email: document.getElementById("email").value, 
+dob: document.getElementById("dob").value, 
+department: document.getElementById("department").value, 
+phone: document.getElementById("phone").value 
+} 
+try{ 
+const res = await fetch("http://localhost:3000/addStudent",{ 
+method:"POST", 
+headers:{ 
+"Content-Type":"application/json" 
+}, 
+body:JSON.stringify(student) 
+}) 
+const data = await res.text() 
+alert(data) 
+// clear form 
+form.reset() 
+}catch(error){ 
+console.log("Error:",error) 
+} 
+}) 
+function goHome(){ 
+window.location.href="index.html" 
+} 
+SERVER.JS: 
+const express = require("express") 
+const cors = require("cors") 
+const path = require("path") 
+const db = require("./db") 
+const app = express() 
+app.use(cors()) 
+app.use(express.json()) 
+// Serve static files (HTML, CSS, JS) 
+app.use(express.static(__dirname)) 
+// Redirect root link to index.html 
+app.get("/", (req, res) => { 
+res.sendFile(path.join(__dirname, "index.html")) 
+}) 
+// Insert student data 
+app.post("/addStudent", (req, res) => { 
+const {name,email,dob,department,phone} = req.body 
+const sql = "INSERT INTO students(name,email,dob,department,phone) VALUES (?,?,?,?,?)" 
+db.query(sql,[name,email,dob,department,phone],(err,result)=>{ 
+if(err){ 
+res.send(err) 
+}else{ 
+res.send("Student Added Successfully") 
+} 
+}) 
+}) 
+// Get student data 
+app.get("/students",(req,res)=>{ 
+db.query("SELECT * FROM students",(err,result)=>{ 
+if(err){ 
+res.send(err) 
+}else{ 
+res.json(result) 
+} 
+}) 
+}) 
+// Start server 
+app.listen(3000,()=>{ 
+console.log("Server running at: http://localhost:3000") 
+}) 
+DB.JS: 
+const mysql = require("mysql") 
+const db = mysql.createConnection({ 
+host: "localhost", 
+user: "root", 
+password: "fahi", 
+database: "studentdb" 
+}) 
+db.connect((err)=>{ 
+if(err){ 
+console.log("Database Error:", err) 
+}else{ 
+console.log("MySQL Connected Successfully") 
+} 
+}) 
+module.exports = db
