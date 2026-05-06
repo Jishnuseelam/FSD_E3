@@ -1,0 +1,108 @@
+INDEX.HTML: 
+<!DOCTYPE html> 
+<html> 
+<head> 
+<title>Employee Management</title> 
+<link rel="stylesheet" href="style.css"> 
+</head> 
+<body> 
+<div class="container"> 
+    <h2>Employee Management</h2> 
+    <input id="name" placeholder="Name"> 
+    <input id="role" placeholder="Role"> 
+    <button onclick="addEmployee()">Add</button> 
+    <ul id="list"></ul> 
+</div> 
+<script src="script.js"></script> 
+</body> 
+</html> 
+ 
+STYLE.CSS: 
+body { 
+    font-family: Arial; 
+    background: #1e1e2f; 
+    color: white; 
+    display: flex; 
+    justify-content: center;   
+    align-items: center;        
+    height: 100vh;              
+    margin: 0; 
+} 
+.container { 
+    text-align: center; 
+} 
+input { 
+    padding: 10px; 
+    margin: 5px; 
+    border-radius: 5px; 
+    border: none; 
+} 
+button { 
+    padding: 10px; 
+    background: #00c6ff; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+} 
+ 
+SCRIPT.JS:  
+function addEmployee() { 
+    const name = document.getElementById("name").value; 
+    const role = document.getElementById("role").value; 
+    fetch("http://localhost:3000/add", { 
+        method: "POST", 
+        headers: { 
+            "Content-Type": "application/json" 
+        }, 
+        body: JSON.stringify({ name, role }) 
+    }) 
+    .then(res => res.json()) 
+    .then(() => loadEmployees()); 
+} 
+function loadEmployees() { 
+    fetch("http://localhost:3000/all") 
+    .then(res => res.json()) 
+    .then(data => { 
+        let list = document.getElementById("list"); 
+        list.innerHTML = ""; 
+ 
+        data.forEach(emp => { 
+            let li = document.createElement("li"); 
+            li.innerText = emp.name + " - " + emp.role; 
+            list.appendChild(li); 
+        }); 
+    }); 
+} 
+loadEmployees(); 
+SERVER.JS: 
+const express = require("express"); 
+const cors = require("cors"); 
+const path = require("path"); 
+const db = require("./db"); 
+const app = express(); 
+app.use(cors()); 
+app.use(express.json()); 
+app.use(express.static(__dirname)); 
+app.get("/", (req, res) => { 
+res.sendFile(path.join(__dirname, "index.html")); 
+}); 
+app.post("/add", (req, res) => { 
+db.addEmployee(req.body); 
+res.json({ msg: "Added" }); 
+}); 
+app.get("/all", (req, res) => { 
+res.json(db.getEmployees()); 
+}); 
+app.listen(3000, () => { 
+console.log("        
+}); 
+DB.JS: 
+let employees = []; 
+Server running at: http://localhost:3000"); 
+function addEmployee(emp) { 
+employees.push(emp); 
+} 
+function getEmployees() { 
+return employees; 
+} 
+module.exports = { addEmployee, getEmployees };
