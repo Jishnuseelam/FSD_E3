@@ -1,0 +1,296 @@
+INDEX.HTML: 
+<!DOCTYPE html> 
+<html> 
+<head> 
+<title>Student Portal</title> 
+<link rel="stylesheet" href="style.css"> 
+</head> 
+<body> 
+<div class="home-container"> 
+<h1>Welcome to Student Portal</h1> 
+<p>Register and manage student information easily.</p> 
+<a href="registration.html" class="start-btn">Go to Registration</a> 
+<a href="dashboard.html" class="start-btn">View Dashboard</a> 
+</div> 
+</body> 
+</html> 
+DASHBOARD.HTML: 
+<!DOCTYPE html> 
+<html> 
+<head> 
+<title>Student Dashboard</title> 
+<link rel="stylesheet" href="dashboard.css"> 
+</head> 
+<body> 
+<div class="container"> 
+<button onclick="goHome()" class="home-btn">Home</button> 
+<h1>Student Dashboard</h1> 
+<div class="controls"> 
+<select id="sortSelect"> 
+<option value="">Sort By</option> 
+<option value="name">Name</option> 
+<option value="dob">Date of Birth</option> 
+</select> 
+<select id="departmentFilter"> 
+<option value="">Filter by Department</option> 
+<option value="CSE">CSE</option> 
+<option value="IT">IT</option> 
+<option value="ECE">ECE</option> 
+<option value="MECH">MECH</option> 
+</select> 
+<button onclick="loadStudents()">Apply</button> 
+</div> 
+<table> 
+<thead> 
+<tr> 
+<th>ID</th> 
+<th>Name</th> 
+<th>Email</th> 
+<th>DOB</th> 
+<th>Department</th> 
+<th>Phone</th> 
+</tr> 
+</thead> 
+<tbody id="studentTable"></tbody> 
+</table> 
+<h2>Department Count</h2> 
+<div id="deptCount"></div> 
+</div> 
+<script src="dashboard.js"></script> 
+<script> 
+function goHome(){ 
+window.location.href = "index.html" 
+} 
+</script> 
+</body> 
+</html> 
+LOGIN.HTML: 
+<!DOCTYPE html> 
+<html> 
+<head> 
+<title>Login</title> 
+<link rel="stylesheet" href="login.css"> 
+</head> 
+<body> 
+<div class="login-container"> 
+<h1>Login</h1> 
+<form id="loginForm"> 
+<label>Username</label> 
+<input type="text" id="username"> 
+<label>Password</label> 
+<input type="password" id="password"> 
+<p id="errorMsg"></p> 
+<button type="submit">Login</button> 
+</form> 
+</div> 
+<script src="login.js"></script> 
+</body> 
+</html> 
+REGISTRATION.HTML: 
+<!DOCTYPE html> 
+<html> 
+<head> 
+<title>Student Registration</title> 
+<link rel="stylesheet" href="style.css"> 
+</head> 
+<body> 
+<div class="container"> 
+<h1>Student Registration</h1> 
+<button onclick="goHome()" class="home-btn">Home</button> 
+<form id="studentForm"> 
+<label>Name</label> 
+<input type="text" id="name" placeholder="Enter your name" required> 
+<label>Email</label> 
+<input type="email" id="email" placeholder="Enter your email" required> 
+<label>Date of Birth</label> 
+<input type="date" id="dob" required> 
+<label>Department</label> 
+<select id="department" required> 
+<option value="">Select Department</option> 
+<option>CSE</option> 
+<option>IT</option> 
+<option>ECE</option> 
+<option>MECH</option> 
+</select> 
+<label>Phone</label> 
+<input type="text" id="phone" placeholder="Enter phone number" required> 
+<button type="submit">Register</button> 
+</form> 
+</div> 
+<script src="script.js"></script> 
+</body> 
+</html> 
+STYLE.CSS: 
+body{ 
+font-family: 'Segoe UI', sans-serif; 
+background: linear-gradient(135deg,#0f2027,#203a43,#2c5364); 
+height:100vh; 
+display:flex; 
+justify-content:center; 
+align-items:center; 
+margin:0; 
+} 
+.container{ 
+width:420px; 
+padding:35px; 
+background:rgba(255,255,255,0.08); 
+border-radius:18px; 
+backdrop-filter: blur(10px); 
+box-shadow:0 10px 35px rgba(0,0,0,0.6); 
+} 
+h1{ 
+text-align:center; 
+color:white; 
+margin-bottom:25px; 
+} 
+h2{ 
+text-align:center; 
+color:white; 
+margin-top:30px; 
+} 
+form{ 
+display:flex; 
+f
+lex-direction:column; 
+} 
+label{ 
+color:#ddd; 
+font-size:14px; 
+margin-bottom:5px; 
+margin-top:10px; 
+} 
+input,select{ 
+width:100%; 
+padding:12px; 
+border:none; 
+border-radius:8px; 
+background:#27496d; 
+color:white; 
+font-size:14px; 
+outline:none; 
+margin-bottom:5px; 
+} 
+input:focus,select:focus{ 
+box-shadow:0 0 8px #00eaff; 
+background:#2c5d8a; 
+} 
+button{ 
+margin-top:15px; 
+padding:12px; 
+border:none; 
+border-radius:10px; 
+background:linear-gradient(45deg,#ff4b2b,#ff416c); 
+color:white; 
+font-size:16px; 
+font-weight:bold; 
+cursor:pointer; 
+transition:0.3s; 
+} 
+button:hover{ 
+transform:scale(1.05); 
+box-shadow:0 0 15px #ff416c; 
+} 
+#studentList{ 
+margin-top:15px; 
+text-align:center; 
+color:white; 
+font-size:15px; 
+} 
+.home-container{ 
+text-align:center; 
+color:white; 
+background:rgba(255,255,255,0.08); 
+padding:50px; 
+border-radius:20px; 
+backdrop-filter: blur(10px); 
+box-shadow:0 10px 35px rgba(0,0,0,0.6); 
+width:420px; 
+} 
+.home-container h1{ 
+font-size:32px; 
+margin-bottom:15px; 
+} 
+.home-container p{ 
+margin-bottom:30px; 
+color:#ddd; 
+} 
+.start-btn{ 
+text-decoration:none; 
+padding:12px 25px; 
+border-radius:10px; 
+background:linear-gradient(45deg,#ff4b2b,#ff416c); 
+color:white; 
+font-weight:bold; 
+transition:0.3s; 
+} 
+.start-btn:hover{ 
+transform:scale(1.05); 
+box-shadow:0 0 15px #ff416c; 
+} 
+SERVER.JS: 
+const express = require("express") 
+const cors = require("cors") 
+const path = require("path") 
+const db = require("./db") 
+const app = express() 
+app.use(cors()) 
+app.use(express.json()) 
+app.use(express.urlencoded({ extended: true })) 
+// Disable default index.html loading 
+app.use(express.static(__dirname, { index: false })) 
+// ========================== 
+// OPEN LOGIN PAGE FIRST 
+// ========================== 
+app.get("/", (req, res) => { 
+res.sendFile(path.join(__dirname, "login.html")) 
+}) 
+// ========================== 
+// LOGIN SYSTEM 
+// ========================== 
+app.post("/login",(req,res)=>{ 
+const {username,password} = req.body 
+const sql = "SELECT * FROM users WHERE username=? AND password=?" 
+db.query(sql,[username,password],(err,result)=>{ 
+if(err){ 
+res.send("error") 
+return 
+} 
+if(result.length > 0){ 
+res.send("success") 
+}else{ 
+res.send("fail") 
+} 
+}) 
+}) 
+// ========================== 
+// STUDENT REGISTRATION 
+// ========================== 
+app.post("/addStudent",(req,res)=>{ 
+const {name,email,dob,department,phone} = req.body 
+const sql = "INSERT INTO students(name,email,dob,department,phone) VALUES (?,?,?,?,?)" 
+db.query(sql,[name,email,dob,department,phone],(err,result)=>{ 
+if(err){ 
+res.send(err) 
+}else{ 
+res.send("Student Added Successfully") 
+} 
+}) 
+}) 
+// ========================== 
+// GET STUDENTS (Dashboard) 
+// ========================== 
+app.get("/students",(req,res)=>{ 
+db.query("SELECT * FROM students",(err,result)=>{ 
+if(err){ 
+res.send(err) 
+}else{ 
+res.json(result) 
+} 
+}) 
+}) 
+// ========================== 
+// START SERVER 
+// ========================== 
+app.listen(3000,()=>{ 
+console.log("Server running at: http://localhost:3000") 
+})
