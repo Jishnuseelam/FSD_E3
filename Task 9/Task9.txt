@@ -1,0 +1,151 @@
+INDEX.HTML: 
+<!DOCTYPE html> 
+<html> 
+<head> 
+<title>Employee MVC</title> 
+<link rel="stylesheet" href="style.css"> 
+</head> 
+<body> 
+<div class="container"> 
+    <h2>Employee Details</h2> 
+    <input id="name" placeholder="Name"> 
+    <input id="role" placeholder="Role"> 
+    <button onclick="addEmployee()">Add</button> 
+    <ul id="list"></ul> 
+</div> 
+<script src="script.js"></script> 
+</body> 
+</html> 
+STYLE.CSS: 
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+} 
+body { 
+    font-family: 'Segoe UI', sans-serif; 
+    background: linear-gradient(135deg, #1f1c2c, #928dab); 
+    height: 100vh; 
+ 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+ 
+    color: white; 
+} 
+.container { 
+    background: rgba(255, 255, 255, 0.1); 
+    padding: 30px; 
+    border-radius: 15px; 
+    backdrop-filter: blur(10px); 
+    width: 320px; 
+    text-align: center; 
+ 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4); 
+} 
+h2 { 
+    margin-bottom: 15px; 
+} 
+input { 
+    width: 100%; 
+    padding: 10px; 
+    margin: 8px 0; 
+ 
+    border: none; 
+    border-radius: 8px; 
+    outline: none; 
+ 
+    transition: 0.3s; 
+} 
+input:hover, 
+input:focus { 
+    transform: scale(1.05); 
+    box-shadow: 0 0 8px #00f7ff; 
+} 
+button { 
+    width: 100%; 
+    padding: 10px; 
+    margin-top: 10px; 
+ 
+    background: #00c6ff; 
+    border: none; 
+    border-radius: 10px; 
+ 
+    color: white; 
+    font-weight: bold; 
+    cursor: pointer; 
+ 
+    transition: 0.3s; 
+} 
+button:hover { 
+    background: #0072ff; 
+    transform: scale(1.05); 
+} 
+ul { 
+    list-style: none; 
+    margin-top: 15px; 
+} 
+li { 
+    background: rgba(255,255,255,0.15); 
+    padding: 8px; 
+    margin: 5px 0; 
+    border-radius: 6px; 
+ 
+    transition: 0.3s; 
+} 
+li:hover { 
+    background: rgba(255,255,255,0.3); 
+} 
+SCRIPT.JS: 
+function addEmployee() { 
+    const name = document.getElementById("name").value; 
+    const role = document.getElementById("role").value; 
+    fetch("/add", { 
+        method: "POST", 
+        headers: { "Content-Type": "application/json" }, 
+        body: JSON.stringify({ name, role }) 
+    }) 
+    .then(() => loadEmployees()); 
+} 
+function loadEmployees() { 
+    fetch("/all") 
+    .then(res => res.json()) 
+    .then(data => { 
+        let list = document.getElementById("list"); 
+        list.innerHTML = ""; 
+        data.forEach(emp => { 
+            let li = document.createElement("li"); 
+            li.innerText = emp.name + " - " + emp.role; 
+            list.appendChild(li); 
+        }); 
+    }); 
+} 
+loadEmployees(); 
+SERVER.JS: 
+const express = require("express"); 
+const cors = require("cors"); 
+const path = require("path"); 
+const db = require("./db"); 
+const app = express(); 
+app.use(cors()); 
+app.use(express.json()); 
+app.use(express.static(__dirname)); 
+app.post("/add", (req, res) => { 
+    db.addEmployee(req.body); 
+    res.json({ msg: "Employee Added" }); 
+}); 
+app.get("/all", (req, res) => { 
+    res.json(db.getEmployees()); 
+}); 
+app.listen(3000, () => { 
+console.log("http://localhost:3000"); 
+}); 
+DB.JS: 
+let employees = []; 
+function addEmployee(emp) { 
+employees.push(emp); 
+} 
+function getEmployees() { 
+return employees; 
+} 
+module.exports = { addEmployee, getEmployees };
