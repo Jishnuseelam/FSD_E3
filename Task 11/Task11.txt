@@ -1,0 +1,121 @@
+INDEX.HTML: 
+<!DOCTYPE html> 
+<html> 
+<head> 
+<title>Student Data Layer</title> 
+<link rel="stylesheet" href="style.css"> 
+</head> 
+<body> 
+<div class="container"> 
+    <h2>Student Data</h2> 
+    <input id="name" placeholder="Name"> 
+    <input id="age" placeholder="Age"> 
+    <input id="dept" placeholder="Department"> 
+    <button onclick="addStudent()">Add</button> 
+    <hr> 
+    <input id="filterDept" placeholder="Filter Dept"> 
+    <input id="sortBy" placeholder="Sort (name/age)"> 
+    <input id="page" placeholder="Page No"> 
+    <button onclick="loadStudents()">Search</button> 
+    <ul id="list"></ul> 
+</div> 
+<script src="script.js"></script> 
+</body> 
+</html> 
+STYLE.CSS: 
+body { 
+    font-family: Arial; 
+    background: #1e1e2f; 
+    color: white; 
+    display:flex; 
+    justify-content:center; 
+    align-items:center; 
+    height:100vh; 
+} 
+.container { 
+    text-align:center; 
+} 
+input { 
+    display:block; 
+    margin:5px; 
+    padding:8px; 
+} 
+SCRIPT.JS: 
+function addStudent() { 
+    const data = { 
+        name: val("name"), 
+        age: val("age"), 
+        dept: val("dept") 
+    }; 
+    fetch("/add", { 
+        method: "POST", 
+        headers: {"Content-Type":"application/json"}, 
+        body: JSON.stringify(data) 
+    }).then(loadStudents); 
+} 
+function loadStudents() { 
+    const dept = val("filterDept"); 
+    const sort = val("sortBy"); 
+    const page = val("page"); 
+ 
+    fetch(`/students?dept=${dept}&sort=${sort}&page=${page}`) 
+    .then(res => res.json()) 
+    .then(data => { 
+        let list = document.getElementById("list"); 
+        list.innerHTML = ""; 
+        data.forEach(s => { 
+            let li = document.createElement("li"); 
+            li.innerText = `${s.name} (${s.age}) - ${s.dept}`; 
+            list.appendChild(li); 
+        }); 
+    }); 
+} 
+function val(id){ 
+    return document.getElementById(id).value; 
+} 
+loadStudents(); 
+SERVER.JS: 
+const express = require("express"); 
+const cors = require("cors"); 
+const db = require("./db"); 
+const app = express(); 
+app.use(cors()); 
+app.use(express.json()); 
+app.use(express.static(__dirname)); 
+// Add student 
+app.post("/add", (req, res) => { 
+    db.add(req.body); 
+    res.json({msg:"Added"}); 
+}); 
+// Filter + Sort + Pagination 
+app.get("/students", (req, res) => { 
+    let { dept, sort, page } = req.query; 
+    let data = db.getAll(); 
+    // FILTER 
+    if (dept) { 
+        data = data.filter(s => s.dept === dept); 
+    } 
+    // SORT 
+    if (sort === "name") { 
+        data.sort((a,b)=>a.name.localeCompare(b.name)); 
+    } else if (sort === "age") { 
+        data.sort((a,b)=>a.age - b.age); 
+    } 
+    // PAGINATION 
+    let limit = 3; 
+    page = parseInt(page) || 1; 
+    let start = (page - 1) * limit; 
+    let paginated = data.slice(start, start + limit); 
+    res.json(paginated); 
+}); 
+app.listen(3000, () => console.log("http://localhost:3000")); 
+ 
+DB.JS: 
+let students = []; 
+function add(s) { 
+students.push(s); 
+} 
+function getAll() { 
+return students; 
+} 
+module.exports = { add, getAll };
